@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap-responsive.css">
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/bootstrap/js/bootstrap.js">
+    <link rel="stylesheet" href="../static/bootstrap/js/bootstrap.min.js">
+    <script src="../static/jquery/jquery-3.7.1.min.js"></script>
+    
+    <style>
+        body{
+            padding-top:60px;
+        }
+        .tr-head{
+            background:#dff0d8;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="">
+                    IDGS-803
+                </a>
+                <ul class="nav">
+                    <li class="active">
+                        <a href=""> 
+                            <i class="icon-home icone-white"></i>
+                            Inicio
+                        </a>
+                    </li>
+                    <li>
+                        <a href=""> 
+                            <i class="icon-user icone-white"></i>
+                            Usuarios
+                        </a>
+                    </li>
+                    <li>
+                        <a href=""> 
+                            <i class="icon-user icone-white"></i>
+                            Alumnos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        {%with messages = get_flashed_messages()%}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">
+                    {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    </div>
+    <div class="container">
+    <div class="row">
+<!--
+        {% for n in alumnos %}
+            <h3>{{n}}</h3>
+        {% endfor %}
+
+        <table>
+            <tr>
+                <td>datos de prueba</td>
+                <td>datos de prueba</td>
+                <td>datos de prueba</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+-->
+    </div>
+
+    {%block content%}
+
+    {%endblock%}
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+{%extends 'layout.html'%}
+
+{%block content%}
+{% import "_macros.html" as macros %}
+<h1>Login</h1>
+
+<form action="" method="post" id="form" novalidate>
+    <label for="usuario">usuario</label>
+    <dd><input class="form-controls" id="usuario" maxlength="20" minlength="3" name="usuario" required="" type="text" value=""></dd>
+    <label for="password">contraseña</label>
+    <dd><input class="form-controls" id="password" maxlength="20" minlength="3" name="password" required="" type="password" value=""></dd>
+    <input type="button" name="btn1" id="btn1" value="registrar">
+    <input type="hidden" name="csrf_token" id="csrf" value="{{csrf_token()}}"/>
+</form>
+
+<script>
+
+    $(document).ready(function () {
+        $("body").bind("ajaxSend", function(elm, xhr, s){
+            if (s.type == "POST") {
+               xhr.setRequestHeader('X-CSRF-Token', getCSRFTokenValue());
+            }
+         });
+
+
+        $("#btn1").click(function () {
+            
+            data = $("#form").serializeArray();
+            server_data = {
+                user : $('#usuario').val(),
+                password: $('#password').val() 
+            };
+            $.ajax({
+                beforeSend: function(request) {
+                    request.setRequestHeader("X-CSRF-Token", document.getElementById("csrf").value);
+                  },
+                url: "/login", type: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify(server_data),
+                success: function (result) {
+                    if(result=="baduser"){
+                        alert("usuario incorrecto");
+                    }
+                    if(result=="badpass"){
+                        alert("contraseña incorrecta");
+                    }
+                    if(result=="3"){
+                        window.location.replace("http://127.0.0.1:5000/");
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+
+{%endblock%}
