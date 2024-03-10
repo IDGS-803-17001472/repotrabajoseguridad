@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 from flask_wtf.csrf import CSRFProtect
 import forms
 from io import open
+from google_recaptcha import ReCaptcha
 app = Flask(__name__)
 from config import DevelopmentConfig
 app.config.from_object(DevelopmentConfig)
@@ -10,11 +11,12 @@ csrf=CSRFProtect()
 import secrets
 cors = CORS(app, resources={r"/*": {"origins": ["*"]}})
 
+app.config['SECRET_KEY'] = secrets.token_hex(16)
+secretkey=app.config['SECRET_KEY']
+
 
 from models import db
 from models import Usuarios
-
-app.config['SECRET_KEY'] = secrets.token_hex(16)
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -26,6 +28,8 @@ def index():
 
 @app.route("/login", methods = ["GET","POST"])
 def login():
+    form=forms.LoginForm(request.form)
+    print('Recaptcha has successded.')
     res=""
     print("dentro de login")
     if request.method == "POST" :
@@ -47,7 +51,7 @@ def login():
             print(url_for('index'))
             return "3"
     if request.method == "GET" :
-        return render_template("login.html") 
+         return render_template("login.html", form=form) 
 
 def loginCompare(user,password):
     user=sanitizar(user)
