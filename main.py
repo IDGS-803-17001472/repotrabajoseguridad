@@ -1,5 +1,7 @@
-from flask import Flask, render_template, request, Response, flash, g, redirect, session, url_for
+from flask import Flask, render_template, request, Response, flash, g, redirect, session, url_for, jsonify
+
 from flask_cors import CORS, cross_origin
+import time
 from flask_wtf.csrf import CSRFProtect
 import forms
 from io import open
@@ -24,44 +26,69 @@ def page_not_found(e):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    if "logged" in session:
+        return render_template("index.html")
+    else:
+        return redirect('login')
+          
 
-@app.route("/login", methods = ["GET","POST"])
+@app.before_request
+def before_request():
+    verificar_inactividad()
+
+@app.after_request
+def after_request(response):
+    return response
+
+
+# En el inicio de la sesión (por ejemplo, después del inicio de sesión exitoso)
+
+# En cada solicitud (antes de procesar la solicitud)
+def verificar_inactividad():
+    tiempo_actual = time.time()
+    tiempo_inactivo = tiempo_actual - session.get('tiempo', tiempo_actual)
+    umbral_inactividad_segundos = 30
+    if tiempo_inactivo > umbral_inactividad_segundos:
+        session.clear() 
+        session.modified = True
+        form=forms.LoginForm()
+        return render_template("login.html", form=form) 
+    session['tiempo'] = tiempo_actual
+    return None  
+
+
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    form=forms.LoginForm(request.form)
-    print('Recaptcha has successded.')
-    res=""
+    form = forms.LoginForm(request.form)
+    print('Recaptcha has succeeded.')
+    res = ""
     print("dentro de login")
-    if request.method == "POST" :
+    if request.method == "POST":
         data = request.get_json()
-        res=loginCompare(data["user"],data["password"])
-        if res=="wronguser":
-            print("1")
-            mensaje="El usuario no ha sido encontrado"
-            flash(mensaje)
-            return "baduser"
-        elif res=="wrongpass":
-            print("2")
-            mensaje="La contraseña es incorrecta"
-            flash(mensaje)
-            return "badpass"
-        elif res=="success":
-            print("3")
-            session["logged"]=True
-            print(url_for('index'))
-            return "3"
-    if request.method == "GET" :
-         return render_template("login.html", form=form) 
+        res = loginCompare(data["user"], data["password"])
+        if res == "wronguser":
+            mensaje = "El usuario no ha sido encontrado"
+            return jsonify(fail=1)
+        elif res == "wrongpass":
+            mensaje = "La contraseña es incorrecta"
+            return jsonify(fail=2)
+        elif res == "success":
+            session["logged"] = data["user"]  # Guarda el usuario loggeado en la sesión
+            return jsonify(success=1)
+    if request.method == "GET":
+        return render_template("login.html", form=form)
 
-def loginCompare(user,password):
-    user=sanitizar(user)
-    password=sanitizar(password)
-    emp_form=forms.LoginForm(request.form)
+def loginCompare(user, password):
+    user = sanitizar(user)
+    password = sanitizar(password)
+    emp_form = forms.LoginForm(request.form)
     usuarioEncontrado = Usuarios.query.filter_by(username=user).all()
     print(usuarioEncontrado)
-    
-    if len(usuarioEncontrado)>0:
-        if usuarioEncontrado[0].password==password:
+
+    if len(usuarioEncontrado) > 0:
+        if usuarioEncontrado[0].password == password:
+            session['tiempo'] = time.time()
             return "success"
         else:
             return "wrongpass"

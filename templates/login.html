@@ -43,14 +43,14 @@
                 contentType: "application/json",
                 data: JSON.stringify(server_data),
                 success: function (result) {
-                    if(result=="baduser"){
-                        alert("usuario incorrecto");
+                    if(result.fail==1){
+                        alert("Usuario incorrecto");
                     }
-                    if(result=="badpass"){
-                        alert("contraseña incorrecta");
+                    if(result.fail==2){
+                        alert("Contraseña incorrecta");
                     }
-                    if(result=="3"){
-                        window.location.replace("http://127.0.0.1:5000/");
+                    if(result.success==1){
+                        window.location.replace("/");
                     }
                 }
             });
