@@ -41,7 +41,7 @@ def after_request(response):
     return response
 
 
-# En el inicio de la sesión (por ejemplo, después del inicio de sesión exitoso)
+
 
 # En cada solicitud (antes de procesar la solicitud)
 def verificar_inactividad():
@@ -61,20 +61,16 @@ def verificar_inactividad():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = forms.LoginForm(request.form)
-    print('Recaptcha has succeeded.')
     res = ""
-    print("dentro de login")
     if request.method == "POST":
         data = request.get_json()
         res = loginCompare(data["user"], data["password"])
         if res == "wronguser":
-            mensaje = "El usuario no ha sido encontrado"
+            
             return jsonify(fail=1)
         elif res == "wrongpass":
-            mensaje = "La contraseña es incorrecta"
             return jsonify(fail=2)
         elif res == "success":
-            session["logged"] = data["user"]  # Guarda el usuario loggeado en la sesión
             return jsonify(success=1)
     if request.method == "GET":
         return render_template("login.html", form=form)
@@ -88,6 +84,7 @@ def loginCompare(user, password):
 
     if len(usuarioEncontrado) > 0:
         if usuarioEncontrado[0].password == password:
+            session["logged"] = usuarioEncontrado[0].username  # Guarda el usuario loggeado en la sesión
             session['tiempo'] = time.time()
             return "success"
         else:
