@@ -50,6 +50,9 @@
                     if (result.fail == 2) {
                         alert("Contraseña incorrecta");
                     }
+                    if (result.fail == 3) {
+                        alert("usuario con caracteres no validos '<', '>'");
+                    }
                     if (result.success == 1) {
                         window.location.replace("/");
                     }

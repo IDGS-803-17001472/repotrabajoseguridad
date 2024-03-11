@@ -18,7 +18,7 @@ class LoginForm(Form):
 class RegistroForm(Form):
     nombre = StringField('nombre', [
         validators.DataRequired(message='el campo es requerido'),
-        validators.length(min=3, max=20, message='ingresa un usuario valido')
+        validators.length(min=3, max=50, message='ingresa un nombre válido')
     ])
     username = StringField('usuario', [
         validators.DataRequired(message='el campo es requerido'),
@@ -28,6 +28,7 @@ class RegistroForm(Form):
         validators.DataRequired(message='el campo es requerido'),
         validators.length(min=3, max=20, message='ingresa una contraseña valida')
     ])
+    permisos = SelectField(u'Selecciona el nivel de permisos', choices=[(0, 'Usuario'), (1, 'Administrador')])
     recaptcha = RecaptchaField()
 
 
