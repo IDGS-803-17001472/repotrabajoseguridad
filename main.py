@@ -173,7 +173,7 @@ def nuevoProducto():
         print("hola")
         print("hola")
         print("hoal")
-        prod=Productos(nombre=prod_form.nombre.data,precio=prod_form.precio.data,stock=prod_form.stock.data)
+        prod=Productos(nombre=prod_form.nombre.data, precio=prod_form.precio.data, stock=prod_form.stock.data)
         db.session.add(prod)
         db.session.commit()
     return render_template("nuevoProducto.html",form=prod_form)
