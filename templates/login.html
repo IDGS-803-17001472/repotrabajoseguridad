@@ -14,7 +14,7 @@
     </div>
     {{render_field(form.recaptcha, class="form-control")}}
     <input type="button" name="btn1" id="btn1" value="Iniciar sesion">
-    <a href="/registro">Regustro</a>
+    <a href="/registro">Registro</a>
     <input type="hidden" name="csrf_token" id="csrf" value="{{csrf_token()}}" />
     {{ recaptcha }}
 </form>
@@ -33,7 +33,7 @@
 
             data = $("#form").serializeArray();
             server_data = {
-                user: $('#usuario').val(),
+                user: $('#username').val(),
                 password: $('#password').val()
             };
             $.ajax({
