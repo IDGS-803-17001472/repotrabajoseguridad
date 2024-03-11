@@ -149,6 +149,7 @@ def loginCompare(user, password):
     return "wronguser"
 
 def sanitizar(palabra):
+    palabra=str(palabra)
     if ";" in palabra or "delete" in palabra or "update" in palabra or "select" in palabra or "'" in palabra or '"' in palabra:
         palabra = palabra.replace(';', '')
         palabra = palabra.replace('delete', '')
@@ -168,15 +169,56 @@ def productos():
 @app.route("/nuevoProducto", methods = ["GET","POST"])
 def nuevoProducto():
     prod_form = forms.ProductoForm(request.form)
-    print(prod_form.stock.data)
     if request.method == "POST" and prod_form.validate() :
-        print("hola")
-        print("hola")
-        print("hoal")
         prod=Productos(nombre=prod_form.nombre.data, precio=prod_form.precio.data, stock=prod_form.stock.data)
         db.session.add(prod)
         db.session.commit()
+        return redirect("productos")
     return render_template("nuevoProducto.html",form=prod_form)
+
+
+
+@app.route("/eliminarProducto", methods=["GET", "POST"])
+def eliminarProducto():
+    form=forms.ProductoForm(request.form)
+    if request.method=='GET':
+        id=sanitizar(request.args.get("id"))
+        name=db.session.query(Productos).filter(Productos.id==id).first().nombre
+        form.id.data = id
+        form.nombre.data = name
+    if request.method == 'POST':
+        id=sanitizar(form.id.data)
+        prod=Productos.query.get(id)
+        db.session.delete(prod)
+        db.session.commit()
+        return redirect('productos')
+    return render_template("eliminar.html", form=form)
+
+
+@app.route("/modificarProducto", methods=["GET", "POST"])
+def modificarProducto():
+    form=forms.ProductoForm(request.form)
+    if request.method=='GET':
+        id=sanitizar(request.args.get("id"))
+        prod=db.session.query(Productos).filter(Productos.id==id).first()
+        form.id.data = request.args.get("id")
+        form.nombre.data=prod.nombre
+        form.precio.data = prod.precio
+        form.stock.data=prod.stock
+    if request.method == 'POST':
+        id=form.id.data
+        print(id)
+        print(id)
+        print(id)
+        prod=db.session.query(Productos).filter(Productos.id==id).first()
+        print(prod.nombre)
+        prod.nombre=form.nombre.data
+        prod.precio=form.precio.data
+        prod.stock=form.stock.data
+        db.session.add(prod)
+        db.session.commit()
+        return redirect('productos')
+    return render_template("modificar.html", form=form)
 
 
 
