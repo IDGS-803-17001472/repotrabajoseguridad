@@ -17,19 +17,21 @@
     </div>
     {{render_field(form.recaptcha, class="form-control")}}
     <input type="submit" name="btn1" id="btn1" value="registrar">
-    <input type="hidden" name="csrf_token" id="csrf" value="{{csrf_token()}}"/>
+    <input type="hidden" name="csrf_token" id="csrf" value="{{csrf_token()}}" />
     {{ recaptcha }}
 </form>
+<p>{{mensaje}}</p>
+
 
 <script>
 
     $(document).ready(function () {
-        $("body").bind("ajaxSend", function(elm, xhr, s){
+        $("body").bind("ajaxSend", function (elm, xhr, s) {
             if (s.type == "POST") {
-               xhr.setRequestHeader('X-CSRF-Token', getCSRFTokenValue());
+                xhr.setRequestHeader('X-CSRF-Token', getCSRFTokenValue());
             }
-         });
         });
+    });
 </script>
 
 

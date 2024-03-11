@@ -56,20 +56,64 @@ def verificar_inactividad():
     session['tiempo'] = tiempo_actual
     return None  
 
+def password_check(passwd):
+
+    SpecialSym =['$', '@', '#', '%']
+    val = True
+    mensaje = ""
+
+    if len(passwd) < 9:
+        mensaje="la contraseña debe de tener una logitud minima de 9"
+        val = False
+
+    if not any(char.isdigit() for char in passwd):
+        mensaje = "La contraseña debe de tener al menos un numero"
+        val = False
+
+    if not any(char.isupper() for char in passwd):
+        mensaje = "La contraseña debe de tener al menos una mayuscula"
+        val = False
+
+    if not any(char.islower() for char in passwd):
+        mensaje = "La contraseña debe de tener al menos una minuscula"
+        val = False
+
+    if not any(char in SpecialSym for char in passwd):
+        mensaje = "La contraseña debe de tener al menos un caracter especial '$','@','#' "
+        val = False
+            
+    return {'valido':val,'mensaje':mensaje}
+
+
 
 @app.route("/registro", methods = ["GET","POST"])
 def registro():
+    mensaje = ""
     form = forms.RegistroForm(request.form)
     print(form.nombre.data)
     if request.method == "POST" and form.validate() :
         print(form.nombre.data)
         nombre = sanitizar(form.nombre.data)
-        username = sanitizar(username=form.username.data)
-        password = sanitizar(password=form.password.data)
+        username=form.username.data
+        password=form.password.data
+        username = sanitizar(username)
+        password = sanitizar(password)
+        
+        resCheck = password_check(password)
+        
+        if username in password:
+            mensaje = "La contraseña no debe de contener el nombre de usuario"
+            return render_template("registro.html",form=form,mensaje=mensaje)
+        
+        if not resCheck['valido']:
+            mensaje = resCheck['mensaje']
+            return render_template("registro.html",form=form,mensaje=mensaje)
+        
         usu=Usuarios(nombre=nombre,username=username,password=password)
         db.session.add(usu)
         db.session.commit()
-    return render_template("registro.html",form=form)
+        return redirect("/login")
+    return render_template("registro.html",form=form,mensaje=mensaje)
 
 
 @app.route("/login", methods=["GET", "POST"])
