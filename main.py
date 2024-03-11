@@ -57,6 +57,20 @@ def verificar_inactividad():
     return None  
 
 
+@app.route("/registro", methods = ["GET","POST"])
+def registro():
+    form = forms.RegistroForm(request.form)
+    print(form.nombre.data)
+    if request.method == "POST" and form.validate() :
+        print(form.nombre.data)
+        nombre = sanitizar(form.nombre.data)
+        username = sanitizar(username=form.username.data)
+        password = sanitizar(password=form.password.data)
+        usu=Usuarios(nombre=nombre,username=username,password=password)
+        db.session.add(usu)
+        db.session.commit()
+    return render_template("registro.html",form=form)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -66,7 +80,6 @@ def login():
         data = request.get_json()
         res = loginCompare(data["user"], data["password"])
         if res == "wronguser":
-            
             return jsonify(fail=1)
         elif res == "wrongpass":
             return jsonify(fail=2)
