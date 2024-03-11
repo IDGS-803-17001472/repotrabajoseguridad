@@ -113,7 +113,7 @@ def registro():
         db.session.add(usu)
         db.session.commit()
         return redirect("/login")
-    return render_template("registro.html",form=form)
+    return render_template("registro.html",form=form,mensaje=mensaje)
 
 
 @app.route("/login", methods=["GET", "POST"])
