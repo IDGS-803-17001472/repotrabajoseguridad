@@ -18,7 +18,7 @@ secretkey=app.config['SECRET_KEY']
 
 
 from models import db
-from models import Usuarios
+from models import Usuarios, Productos
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -69,6 +69,7 @@ def registro():
         usu=Usuarios(nombre=nombre,username=username,password=password)
         db.session.add(usu)
         db.session.commit()
+        return redirect("/login")
     return render_template("registro.html",form=form)
 
 
@@ -113,6 +114,27 @@ def sanitizar(palabra):
         palabra = palabra.replace("'", '')
         palabra = palabra.replace('"', '')
     return palabra
+
+
+
+@app.route("/productos", methods = ["GET","POST"])
+def productos():
+    productos=Productos.query.all()
+    return render_template("productos.html", empleados=productos)
+
+@app.route("/nuevoProducto", methods = ["GET","POST"])
+def nuevoProducto():
+    prod_form = forms.ProductoForm(request.form)
+    print(prod_form.stock.data)
+    if request.method == "POST" and prod_form.validate() :
+        print("hola")
+        print("hola")
+        print("hoal")
+        prod=Productos(nombre=prod_form.nombre.data,precio=prod_form.precio.data,stock=prod_form.stock.data)
+        db.session.add(prod)
+        db.session.commit()
+    return render_template("nuevoProducto.html",form=prod_form)
+
 
 
 if __name__ == "__main__":
