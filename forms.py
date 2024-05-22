@@ -1,7 +1,7 @@
 from wtforms import Form
 from wtforms import StringField, SelectField, RadioField, EmailField, IntegerField, PasswordField, DecimalField
 from wtforms import validators
-from flask_wtf.recaptcha import RecaptchaField
+from flask_wtf.recaptcha import RecaptchaField 
 
 class LoginForm(Form):
     username = StringField('usuario', [
